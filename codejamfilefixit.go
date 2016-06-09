@@ -21,8 +21,22 @@ import (
 var infileopt, outfileopt string
 var infile, outfile *os.File
 var totalcases int
+
+var testcases []Testcase
 	
+
+//structures
+type Testcase struct {
+	num int
 	
+	curdirs []string
+	newdirs []string
+	solution int
+	
+}
+
+
+//program entry point
 func main() {
 
 	defer infile.Close()
@@ -33,6 +47,19 @@ func main() {
 	openFiles() //open the files
 	
 	processFile()
+	
+	for _, v := range testcases {  //solve all cases
+		v.solve()
+	}
+	
+	printErrln("All cases solved, output solutions!")
+	
+	//for _, v := range testcases {  //output all solutions
+		//fmt.Fprintf(outfile, "Case #%d: %d\n", v.num, v.solution)
+	//}
+	
+	printErrln("Finished!!!")
+	
 }
 
 //get the flags from command line
@@ -109,29 +136,80 @@ func processFile() {  //process the input file into data structure
 		os.Exit(5)
 	}
 
-	printErrln("Cases: ", totalcases)
+	printErrln("Total cases: ", totalcases)
 	
-	for i := 1; i <= totalcases; i++  {  //increment through the cases
+	testcases = make( []Testcase, totalcases )  //allocate structure for cases
+	
+	for i := 0; i < totalcases; i++  {  //increment through the cases
 
-		var cpudirnum, newdirnum int //varables for storing current cases directories on computer and directories to be created	
+		testcases[i].num = i+1
+
+		var curdirnum, newdirnum int //varables for storing current cases directories on computer and directories to be created	
 		
-		line, err = reader.ReadString('\n')
-		dirnums := strings.Split(strings.TrimSpace( line ), " ")
-		printErrln( len(dirnums) )
-		cpudirnum, err = strconv.Atoi( dirnums[0] )
-		newdirnum, err = strconv.Atoi( dirnums[1] )
+		line, err = reader.ReadString('\n') 
+		dirnums := strings.Split(strings.TrimSpace( line ), " ") 
 		
-		printErrln("\nCase#", i, "CpuDirs=", cpudirnum, "  NewDirs=", newdirnum)
-		
-		for c := 0; c < cpudirnum; c++ {
-			line, err = reader.ReadString('\n')
+		curdirnum, err = strconv.Atoi( dirnums[0] )  //get number of current directories
+		if err != nil { 
+			printErrln("Error converting cpudirnum: ", err)
+			os.Exit(6)
 		}
 		
-		for n := 0; n < cpudirnum; n++ {
-			line, err = reader.ReadString('\n')
+		newdirnum, err = strconv.Atoi( dirnums[1] ) //get number of new directories
+		if err != nil {
+			printErrln("Error converting newdirnum: ", err)
+			os.Exit(7)
 		}
+		
+		printErrln("Reading Case#", i + 1, "CpuDirs=", curdirnum, "  NewDirs=", newdirnum)
+		
+		testcases[i].curdirs = make( []string, curdirnum)
+		for c := 0; c < curdirnum; c++ {  //read all directories on CPU
+			line, err = reader.ReadString('\n')
+			if( err != nil ) {
+				printErrln("Error reading case#", i+1, " cpudirnum#", c+1)
+				os.Exit(8)
+			}
+			
+			testcases[i].curdirs[c] = strings.TrimSpace(line)
+			
+		}
+		
+		testcases[i].newdirs = make( []string, newdirnum )
+		for n := 0; n < newdirnum; n++ {  //read all new directories to be creaed
+			line, err = reader.ReadString('\n')
+			if( err != nil ) {
+				printErrln("Error reading case#", i+1, " newdirnum#", n+1)
+				os.Exit(9)
+			}
+			
+			testcases[i].newdirs[n] = strings.TrimSpace( line )
+			
+		}
+		
+
+	}
 	
+	printErrln("Finished reading test cases!")
+		
+}
+
+type Dir struct {
+	dirs map[string]Dir
+}
+
+//solve the cases here!!!  Store solution in self.solution
+func (self Testcase) solve() {
+	
+	var root Dir
+
+	root.dirs = make(map[string]Dir)  //root directory
+	
+	for _, v := range self.curdirs {  //go through current dir lines
+		dirstructure := strings.Split(v, "/")  //split directories
+					
 	}
 		
+	printErrln("Solved#", self.num)
 }
 
