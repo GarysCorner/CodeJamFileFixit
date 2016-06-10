@@ -3,6 +3,7 @@
 //Date:		2016-06-08
 //Desc:		This program is designed to solve Google Code Jam "File Fix-it"
 //Problem:	https://code.google.com/codejam/contest/635101/dashboard
+//Results:	(prelim using virtual machine) SmallProblem:33.669756ms		LargeProblem:122.757317ms
 
 package main
 
@@ -14,13 +15,15 @@ import (
 		"bufio"
 		"strconv"
 		"strings"
+		"time"
 	)
 	
 	
 //global variables
-var infileopt, outfileopt string
-var infile, outfile *os.File
-var totalcases int
+var infileopt, outfileopt string  //input and output filenames
+var infile, outfile *os.File  //input and output file pointers
+var totalcases int  //number of cases 
+
 
 var testcases []Testcase
 	
@@ -39,6 +42,8 @@ type Testcase struct {
 //program entry point
 func main() {
 
+	starttime := time.Now()  //start time for stats
+
 	defer infile.Close()
 	defer outfile.Close()
 
@@ -53,7 +58,7 @@ func main() {
 		
 	}
 		
-	printErrln("Finished!!!")
+	printErrln("done!  Processed", totalcases, " in ", time.Now().Sub(starttime))
 	
 }
 
@@ -111,6 +116,7 @@ func openFiles() {
 
 func processFile() {  //process the input file into data structure
 
+	starttime := time.Now()
 
 	var err error	
 	var line string
@@ -156,7 +162,7 @@ func processFile() {  //process the input file into data structure
 			os.Exit(7)
 		}
 		
-		printErrln("Reading Case#", i + 1, "CpuDirs=", curdirnum, "  NewDirs=", newdirnum)
+		//printErrln("Reading Case#", i + 1, "CpuDirs=", curdirnum, "  NewDirs=", newdirnum)  //for testing
 		
 		testcases[i].curdirs = make( []string, curdirnum)
 		for c := 0; c < curdirnum; c++ {  //read all directories on CPU
@@ -185,7 +191,7 @@ func processFile() {  //process the input file into data structure
 
 	}
 	
-	printErrln("Finished reading test cases!")
+	printErrln("Read", totalcases, "in", time.Now().Sub(starttime) ,"\n")  //output time taken to read all cases
 		
 }
 
@@ -196,23 +202,24 @@ type Dir struct {
 //solve the cases here!!!  Store solution in self.solution
 func (self Testcase) solve() int {
 	
-	//var curdirnum int
-	var root Dir
-	var created int = 0	
-	root.dirs = make(map[string]*Dir)  //root directory
+	var root Dir  //root directory always created
+	root.dirs = make(map[string]*Dir)  //root directory	
+	
+	
+	var created, curdirnum int = 0, 0 //created directories
+
 	
 	for _, v := range self.curdirs {  //go through current dir lines
 		dirstructure := strings.Split(v, "/")  //split directories
-		createdir(&created, &root, dirstructure[1:])
+		createdir(&curdirnum, &root, dirstructure[1:])  //ignore first dir because null
 	}
 	
 	
-	created = 0
 
 	for _, v := range self.newdirs {  //go through current dir lines
 		
 		dirstructure := strings.Split(v, "/")  //split directories
-		createdir(&created, &root, dirstructure[1:])
+		createdir(&created, &root, dirstructure[1:])  //ignore first dir because null
 	}
 
 	printErrln("Solved#", self.num, " answer=", created) 
@@ -225,7 +232,7 @@ func (self Testcase) solve() int {
 func createdir( created *int,  root *Dir, structure []string ) {  //create a directory if it exists and increment created otherwise move on to next level
 
 
-	if _, ok := root.dirs[structure[0]]; ok == false {
+	if _, ok := root.dirs[structure[0]]; ok == false {  //create directory if null and increment created
 
 		
 		var newdir Dir
