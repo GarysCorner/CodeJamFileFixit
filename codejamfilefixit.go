@@ -49,15 +49,10 @@ func main() {
 	processFile()
 	
 	for _, v := range testcases {  //solve all cases
-		v.solve()
+		fmt.Fprintf(outfile, "Case #%d: %d\n", v.num, v.solve())
+		
 	}
-	
-	printErrln("All cases solved, output solutions!")
-	
-	//for _, v := range testcases {  //output all solutions
-		//fmt.Fprintf(outfile, "Case #%d: %d\n", v.num, v.solution)
-	//}
-	
+		
 	printErrln("Finished!!!")
 	
 }
@@ -195,21 +190,62 @@ func processFile() {  //process the input file into data structure
 }
 
 type Dir struct {
-	dirs map[string]Dir
+	dirs map[string]*Dir
 }
 
 //solve the cases here!!!  Store solution in self.solution
-func (self Testcase) solve() {
+func (self Testcase) solve() int {
 	
+	//var curdirnum int
 	var root Dir
-
-	root.dirs = make(map[string]Dir)  //root directory
+	var created int = 0	
+	root.dirs = make(map[string]*Dir)  //root directory
 	
 	for _, v := range self.curdirs {  //go through current dir lines
 		dirstructure := strings.Split(v, "/")  //split directories
-					
+		createdir(&created, &root, dirstructure)
 	}
+	
+	
+	created = 0
+
+	printErrln( "!!!SolutionLoop!!!", self.num)
+
+	for _, v := range self.newdirs {  //go through current dir lines
 		
-	printErrln("Solved#", self.num)
+		dirstructure := strings.Split(v, "/")  //split directories
+		createdir(&created, &root, dirstructure)
+	}
+
+	printErrln("Solved#", self.num, " answer=", created) 
+	
+	return created
+	
+
 }
 
+func createdir( created *int,  root *Dir, structure []string ) {  //create a directory if it exists and increment created otherwise move on to next level
+
+
+	if _, ok := root.dirs[structure[0]]; ok == false {
+
+		
+		var newdir Dir
+		newdir.dirs = make(map[string]*Dir)		
+		root.dirs[structure[0]] = &newdir
+		
+		(*created)++
+		
+		printErrln( "Created", structure[0] )	
+		
+	}
+	
+
+	
+	if len( structure) > 1  {		
+		createdir( created, root.dirs[structure[0]], structure[1:]) //go to next level
+	}
+	
+
+
+}
