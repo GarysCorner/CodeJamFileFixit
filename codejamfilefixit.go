@@ -203,18 +203,16 @@ func (self Testcase) solve() int {
 	
 	for _, v := range self.curdirs {  //go through current dir lines
 		dirstructure := strings.Split(v, "/")  //split directories
-		createdir(&created, &root, dirstructure)
+		createdir(&created, &root, dirstructure[1:])
 	}
 	
 	
 	created = 0
 
-	printErrln( "!!!SolutionLoop!!!", self.num)
-
 	for _, v := range self.newdirs {  //go through current dir lines
 		
 		dirstructure := strings.Split(v, "/")  //split directories
-		createdir(&created, &root, dirstructure)
+		createdir(&created, &root, dirstructure[1:])
 	}
 
 	printErrln("Solved#", self.num, " answer=", created) 
@@ -235,8 +233,6 @@ func createdir( created *int,  root *Dir, structure []string ) {  //create a dir
 		root.dirs[structure[0]] = &newdir
 		
 		(*created)++
-		
-		printErrln( "Created", structure[0] )	
 		
 	}
 	
