@@ -1,4 +1,4 @@
-//File:		codejamstorecredit.go
+//File:		codejamfilefixit.go
 //Author:	Gary Bezet
 //Date:		2016-06-08
 //Desc:		This program is designed to solve Google Code Jam "File Fix-it"
