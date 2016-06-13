@@ -3,7 +3,8 @@
 //Date:		2016-06-08
 //Desc:		This program is designed to solve Google Code Jam "File Fix-it"
 //Problem:	https://code.google.com/codejam/contest/635101/dashboard
-//Results:	(using linux virtual machine) SmallProblem:33.669756ms		LargeProblem:122.757317ms
+//Results:	(native linux) SmallProblem:8.099313ms		LargeProblem:46.189754ms
+ms
 
 package main
 
